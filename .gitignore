@@ -1,0 +1,4 @@
+*.srt
+tmp.php
+
+data/temp_srt/
