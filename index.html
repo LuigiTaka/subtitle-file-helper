@@ -172,6 +172,10 @@
         </div>
         <div v-else-if='id'>
             <button @click='cleanStorage()'>Limpar</button>
+
+            <button @click="downloadFile">Baixar</button>
+
+            <button @click="copy()">Copiar</button>
         </div>
         <hr>
     </header>
@@ -238,6 +242,22 @@
         });
     };
 
+    const makeSubtitleMemoryKey = ({order}) => { 
+        let key = 'subtitle-order-'+order;
+        return key;
+
+    };
+
+    const srtTrackFormat = ({text,timestamp,order}) => {
+        let timestampText = [timestamp.start, timestamp.end].join(" --> ");
+        let track = [ "\u200e"+order,timestampText,text ];
+        return track.join('\n\r')+"\n\r";
+    }
+
+    const sessionMemoryKey = ({id}) => { 
+        return "srt-"+key;
+    }
+
     window.app = new Vue({
         el:"#app",
         data:{
@@ -264,7 +284,8 @@
             setEditMode(cc){
                 this.editing = true;
                 const data = JSON.parse(JSON.stringify(Object.assign(SrtSubtitle,cc)));
-                let history = window.localStorage.getItem("subtitle-order-"+data.order);
+                const subtitleMkey = makeSubtitleMemoryKey(data);
+                let history = window.localStorage.getItem(subtitleMkey);
                 if(history){
                     this.currentSubtitle = JSON.parse(history);
                 }else{
@@ -285,13 +306,15 @@
                         
 
                         for (const track of tracks) {
-                            let hasHistory = window.localStorage.getItem("subtitle-order-"+track.order);
+                            const subtitleMkey = makeSubtitleMemoryKey(track);
+                            let hasHistory = window.localStorage.getItem(subtitleMkey);
                             track.hasHistory = Boolean(hasHistory);
                             track.originalText = track.text;
                         }
                         this.tracks = tracks;
 
                         this.fileLoaded = true;
+                        const sessionMkey = sessionMemoryKey({id:this.id});
                         window.localStorage.setItem("srt-id",this.id);
                
                 })
@@ -304,14 +327,17 @@
                 window.localStorage.removeItem("srt-id")
             },
             save(){ 
-                for (const track of this.tracks) {
-                    if(track.order === this.currentSubtitle.order){
-                        console.log(track);
-                        track.hasHistory = true;
-                        break;
-                    }
-                }
-                window.localStorage.setItem("subtitle-order-"+this.currentSubtitle.order,JSON.  stringify(this.currentSubtitle));
+                let c= this.tracks.find( x => x.order === this.currentSubtitle.order );
+                c.hasHistory = true;
+                const k = makeSubtitleMemoryKey(this.currentSubtitle);
+                
+                c.timestamp.end = this.currentSubtitle.timestamp.end;
+                c.timestamp.start = this.currentSubtitle.timestamp.start;
+                c.text = this.currentSubtitle.text;
+                //c = Object.assign(SrtSubtitle,c,this.currentSubtitle);
+                console.log(c)
+                //this.currentSubtitle.timestamp.start
+                window.localStorage.setItem(k,JSON.  stringify(this.currentSubtitle));
             },
             deleteHistory(){
                 const t = this.tracks.find( x => x.order === this.currentSubtitle.order );
@@ -321,6 +347,28 @@
                 this.currentSubtitle.text = t.text;
                 console.log(t);
                 window.localStorage.removeItem("subtitle-order-"+this.currentSubtitle.order);
+            },
+            downloadFile(){ 
+                //will get all the subtitles and add together in the SRT file format.
+                //all data will be deleted.
+                //inserting the new file in the API should be possible.
+                let lines = this.tracks.map((track) => { 
+                    if(track.hasHistory){
+                        const key = makeSubtitleMemoryKey(track);
+                        const subtitleMemory = JSON.parse(window.localStorage.getItem(key));
+                        track.text = subtitleMemory.text
+                    }
+                     
+                    return srtTrackFormat(track);
+                });
+                let fileContent = lines.join("\n\r");
+
+                console.log(fileContent);
+
+                console.log("Total Cells: "+lines.length);
+            },
+            copy(){ 
+                console.warn("not yet");
             }
 
         }
