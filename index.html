@@ -251,11 +251,30 @@
     const srtTrackFormat = ({text,timestamp,order}) => {
         let timestampText = [timestamp.start, timestamp.end].join(" --> ");
         let track = [ "\u200e"+order,timestampText,text ];
-        return track.join('\n\r')+"\n\r";
+        return track.join('\n')+"\n";
     }
 
     const sessionMemoryKey = ({id}) => { 
         return "srt-"+key;
+    }
+
+    const downloadFile = ({ filename,data,type }) => { 
+        let file = new Blob([data],{type:type});
+        if (window.navigator.msSaveOrOpenBlob) {  /* IE10+*/
+            window.navigator.msSaveOrOpenBlob(file, filename);
+        }else{ 
+            const url = URL.createObjectURL(file),
+            anchor = document.createElement('a');
+
+            anchor.href = url;
+            anchor.download = filename;
+            document.body.appendChild(anchor);
+            anchor.click();
+            setTimeout(function() {
+                document.body.removeChild(anchor);
+                window.URL.revokeObjectURL(url);  
+            }, 1);
+        }
     }
 
     window.app = new Vue({
@@ -366,6 +385,8 @@
                 console.log(fileContent);
 
                 console.log("Total Cells: "+lines.length);
+                console.info("Downloading...");
+                downloadFile({filename:"minha_legenda.srt",data:fileContent,type:"text"});
             },
             copy(){ 
                 console.warn("not yet");
