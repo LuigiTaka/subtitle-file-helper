@@ -251,7 +251,7 @@
     }
 
     const sessionMemoryKey = ({id}) => { 
-        return "srt-"+key;
+        return "srt-"+id;
     }
 
     const downloadFile = ({ filename,data,type }) => { 
@@ -307,35 +307,47 @@
                 }
                 this.currentSubtitle.originalText = data.text;
             },
-            loadFile(){
-                let $file = this.$refs.ccTrack;
-                let fd = new FormData;
-                fd.append("file",$file.files[0]);
-                fd.append("id",this.id);
-                let uploadData = upload('http://localhost:8080/api/srt.php',fd)
-                .then(response => response.json())
-                .then( (uploadData) => {
-                        let tracks = uploadData.lines;
-                        this.id = uploadData.id;
-                        
-
-                        for (const track of tracks) {
+            setTracks(tracks){
+                
+                for (const track of tracks) {
                             const subtitleMkey = makeSubtitleMemoryKey(track);
                             let hasHistory = window.localStorage.getItem(subtitleMkey);
                             track.hasHistory = Boolean(hasHistory);
                             track.originalText = track.text;
-                        }
-                        this.tracks = tracks;
+                }    
+                this.tracks = tracks;
 
-                        this.fileLoaded = true;
-                        const sessionMkey = sessionMemoryKey({id:this.id});
-                        window.localStorage.setItem("srt-id",this.id);
-               
-                })
-                .catch((error) => {
-                    console.log(error)
-                });
-                     
+            },
+            loadFile(){
+                    this.fileLoaded = false;
+                let parser = new SrtParser();
+                if(this.id){
+                    const content = window.localStorage.getItem("srt-content-"+this.id);
+                    const tracks = parser.parse({content:content});
+                    console.log(tracks);
+                    this.setTracks(tracks);
+                    this.fileLoaded = true;
+                    return;
+                }
+
+                let $file = this.$refs.ccTrack;
+                read = new FileReader();
+                read.readAsBinaryString($file.files[0]);
+
+                let id = Math.random().toString();
+                read.onloadend = () => {
+                    const content = (read.result);
+                    console.log(content)
+                    let tracks = parser.parse( {content} );
+                    this.setTracks(tracks);
+                    this.fileLoaded = true;
+                    if(!this.id){
+                        this.id = id;
+                    }
+                    const sessionMkey = sessionMemoryKey({id:this.id});
+                    window.localStorage.setItem("srt-id",this.id);
+                    window.localStorage.setItem('srt-content-'+this.id,content);
+                }
             },
             cleanStorage(){
                 window.localStorage.removeItem("srt-id")

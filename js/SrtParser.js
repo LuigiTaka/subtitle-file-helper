@@ -34,11 +34,11 @@ class SrtParser  {
         const subtitles = rawSubtitles.map( (row) => { 
             let lines = row.split("\n");
             const srt =  Object.assign({},SrtSubtitle);
-            srt.order = Number.parseInt(lines.shift().replace(/\u200e/,'').trim() );
+            srt.order = Number.parseInt(lines.shift().replace(/\u200e/ui,'').trim() );
             let timestamps = lines.shift().split( '-->' ).map( t => t.trim() );
             srt.timestamp.start = timestamps[0];
             srt.timestamp.end = timestamps[1];
-            srt.text = lines.join('\n')+"\n";
+            srt.text = lines.join('\n')+"\n".replace(/\u200e/ui,'').trim();
             return srt;
         });
         return subtitles;
