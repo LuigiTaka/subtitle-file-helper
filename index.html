@@ -222,14 +222,10 @@
     </main>
 </div>
 </body>
-<script>
-    const SrtSubtitle = {
-        text:'',
-        timestamp:{start:null,end:null},
-        order:null,
-        hasHistory:false,
-    };
+<script src="/js/SrtParser.js"></script>
 
+<script>
+    const SrtSubtitleUI = Object({hasHistory:false},SrtSubtitle);
     const upload = async (url,formData) => {
         return fetch(url, { // Your POST endpoint
             method: 'POST',
@@ -276,7 +272,7 @@
             }, 1);
         }
     }
-
+    
     window.app = new Vue({
         el:"#app",
         data:{
@@ -297,12 +293,11 @@
                 this.id = id;
                 this.loadFile();
             }
-            console.log('mounted');
         },
         methods:{
             setEditMode(cc){
                 this.editing = true;
-                const data = JSON.parse(JSON.stringify(Object.assign(SrtSubtitle,cc)));
+                const data = JSON.parse(JSON.stringify(Object.assign(SrtSubtitleUI,cc)));
                 const subtitleMkey = makeSubtitleMemoryKey(data);
                 let history = window.localStorage.getItem(subtitleMkey);
                 if(history){
