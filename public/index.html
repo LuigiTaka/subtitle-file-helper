@@ -118,23 +118,8 @@
         get("#file-description").text = 'Pronto.'
     }
 
-    const dropHandler = (e) => { 
-        let dt = e.dataTransfer
-        let file = null;
-        if (e.dataTransfer.items) {
-            // Use DataTransferItemList interface to access the file(s)
-            for (var i = 0; i < 1; i++) {
-            // If dropped items aren't files, reject them
-                 if (e.dataTransfer.items[i].kind === 'file') {
-                     file = e.dataTransfer.items[i].getAsFile();
-                    console.log('... file[' + i + '].name = ' + file.name);
-                }
-            }
-        }
-        console.info("file");
-        console.log(file);
-        let read = new FileReader();
-    
+    const handleFileContent = (file) => {
+        let read = new FileReader();    
         setFileLoaderOn();
         window.cfile = file;
         read.onload = function(event) {
@@ -153,6 +138,23 @@
         read.readAsText(file); 
     }
 
+    const dropHandler = (e) => { 
+        let dt = e.dataTransfer
+        let file = null;
+        if (e.dataTransfer.items) {
+            // Use DataTransferItemList interface to access the file(s)
+            for (var i = 0; i < 1; i++) {
+            // If dropped items aren't files, reject them
+                 if (e.dataTransfer.items[i].kind === 'file') {
+                     file = e.dataTransfer.items[i].getAsFile();
+                    console.log('... file[' + i + '].name = ' + file.name);
+                }
+            }
+        }
+        handleFileContent(file);
+        
+    }
+
     const highlight = () => { 
         $dropArea.classList.add('highlight')
     }
@@ -169,6 +171,7 @@
 
     const $novaLegendaBtn = get("#nova-legenda-wrapper");
     const $dropArea = get("#drop-area");
+    const $dropAreaInput = get("#subtitle-file");
     const parser = new SrtParser();
 
     ['dragenter', 'dragover'].forEach(eventName => {
@@ -191,6 +194,14 @@
     });
 
 
+    $dropArea.addEventListener("click",(e) => { 
+        $dropAreaInput.click();
+    });
+
+    $dropAreaInput.addEventListener("change",(e) => {
+        const f = e.target.files[0];
+        handleFileContent(f);
+    });
 
     $dropArea.addEventListener('dragenter', handlerFunction, false)
     $dropArea.addEventListener('dragleave', handlerFunction, false)
