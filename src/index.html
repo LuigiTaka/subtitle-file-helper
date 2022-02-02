@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> <%= htmlWebpackPlugin.options.title %> </title>
+    <meta name="description" content="<%= htmlWebpackPlugin.options.metaDesc %>" />
+
+    <style>
+
+
+    </style>
+
+</head>
+<body>
+    
+    <header class='text-center'>
+        <h1>Nome do Site</h1>
+        <p> Editor de arquivos <i class='cursor'> <span title="SubRib">.srt</span>. </i> Permite alterar o conteúdo das faixas de legenda como tempo de execução e conteúdo da legenda.</p>
+        <p>Clique ou arraste um arquivo na área abaixo para começar a editar ou clique em Novo Arquivo para começar uma legenda nova. </p>
+    </header>
+
+    <main class='d-flex flex'>
+        <section class='file-input' id='drop-area' ondragend="dropHandler(event)" ondragstart="dragstart_handler(event)">
+                <h2 id='file-description'>Solte o Arquivo aqui</h2>
+                <input type="file" name="subtitle" id="subtitle-file" hidden>
+        </section>
+
+        <section id='nova-legenda-wrapper'>
+              <button class="buttonless" id='nova-legenda'> <h2> NOVO ARQUIVO </h2> </button>        
+        </section>
+    </main>
+
+
+</body>
+
+</html>
+
+
