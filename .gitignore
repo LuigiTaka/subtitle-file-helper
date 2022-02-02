@@ -1,4 +1,5 @@
 *.srt
 tmp.php
-
+dist/
+node_modules/
 data/temp_srt/
