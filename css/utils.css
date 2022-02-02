@@ -3,6 +3,18 @@
     display: flex;
 }
 
+.flex-center{
+    align-items: center;
+    justify-content: center;
+}
+
+.ml-auto{
+    margin-left: auto;
+}
+
+.text-light{
+    color: #b2b2b2;
+}
 
 .flex{
     flex:1;
