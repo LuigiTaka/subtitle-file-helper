@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/prototype.css">
+</head>
+<body>
+    <div class='main pt-2'>
+        <div class='d-flex flex-column'>
+
+            <h1>Nome</h1>
+            <div class='pt-2'>
+                <p> Ferramenta para trabalhar com arquivos SRT. </p>
+                <p> Arraste um arquivo para editá-lo. Você pode baixar as edições como um arquivo SRT quando desejar.</p>
+            </div>
+
+        </div>
+    
+        <div class='d-flex flex text-center pt-4'>
+    
+            <div class='d-flex flex-column flex-center flex fast-action'>
+                <button type="button" class='stealth-button'> Tradução</button>
+                <div class='fast-action-hint'>
+                    Some random text explain the action above.
+                </div>
+            </div>
+            
+            <div class='d-flex flex-column flex-center flex fast-action'>
+                <button type="button" class='stealth-button'>Edição</button>
+                <div class='fast-action-hint'>
+                    Some random text explain the action above.
+                </div>
+            </div>
+
+        </div>    
+    </div>
+</body>
+
+    <script>
+
+            const $hints = document.getElementsByClassName("fast-action-hint");
+            const $fastActions = document.getElementsByClassName("fast-action");
+            Array.from($hints).forEach((obj,k) => { 
+                obj.classList.add("hidden");
+            });
+
+
+            const showHint = (e) =>  {
+                const $hint = e.target.getElementsByClassName("fast-action-hint")[0];
+                $hint.classList.remove("hidden");
+                e.stopPropagation();
+    
+            }
+
+            const hideHint = (e) => { 
+                const $hint = e.target.getElementsByClassName("fast-action-hint")[0];
+                console.log(e.target);
+                console.log($hint);
+                $hint.classList.add("hidden");
+                e.stopPropagation();
+            }
+
+            console.log($fastActions);
+
+            Array.from($fastActions).forEach( (obj,value) =>{ 
+                obj.addEventListener("mouseover",(e) => { 
+                    console.log("in")
+                    showHint(e);
+                } )
+
+                obj.addEventListener("mouseout",(e) => { 
+                    console.log("out")
+                    hideHint(e);
+                });
+            });
+
+
+
+    </script>
+
+</html>
