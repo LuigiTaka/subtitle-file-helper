@@ -12,6 +12,7 @@ class SrtParser  {
 
     constructor() {
         this.SrtPattern = new RegExp(/\n\s*\n/,'iu');    
+        this.SrtStartCharacter = "\u200e";
     }
     
     SrtSubtitle2String(SrtSubtitle){ 
@@ -29,9 +30,17 @@ class SrtParser  {
         return lines.join('\n');
     }
 
+    splitFileContent(content) { 
+        return content.split(this.SrtPattern);
+    }
+
     parse ({content}) { 
-        const rawSubtitles = content.split(this.SrtPattern);
+        const rawSubtitles = this.splitFileContent(content);
         const subtitles = rawSubtitles.map( (row) => { 
+            if(!row || !row.length){
+                return Object.assign({},SrtSubtitle);
+            }
+
             let lines = row.split("\n");
             const srt =  Object.assign({},SrtSubtitle);
             srt.order = Number.parseInt(lines.shift().replace(/\u200e/ui,'').trim() );
