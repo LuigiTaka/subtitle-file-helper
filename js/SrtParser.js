@@ -6,7 +6,7 @@ const SrtSubtitle = {
 };
 
 
-export default class SrtParser  { 
+class SrtParser  { 
 
     lines
 
@@ -61,38 +61,6 @@ export default class SrtParser  {
                 lines.push( line );
         }
         return lines.join('\n\n');
-    }
-
-    getTimestampObj({timestamp}){ 
-        const start = timestamp.start,
-        end = timestamp.end;
-    }
-
-    timestampParse(timestamp){ 
-        
-        let parts = timestamp.split(':');
-        let last = parts.pop();
-        last = last.split(',');
-        parts.push( ...last);
-        let t = {hour :  parts[0],minute : parts[1],second:  parts[2],ms : parts[3] };
-        console.log(t);
-    }
-
-    editTimestamp( { queue,target } ){
-        const subtitleOrderBefore = target.order - 1,
-            subtitleOrderAfter = traget.order + 1;
-        let before = queue.find( (item) => { item.order === subtitleOrderBefore  } );    
-        let after = queue.find( (item) => item.order === subtitleOrderAfter );
-
-
-        if(before){
-            //modify the endpoint of the subtitle half of the time that was added or subtracted of the target subtitle
-        }
-
-        if(after){ 
-            //modify the startpoint of the subtitle half of the time that was added or subtracted of the target subtitle
-        }
-          
     }
 
 };

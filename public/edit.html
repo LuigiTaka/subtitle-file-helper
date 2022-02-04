@@ -19,7 +19,19 @@
             <nav>
                 <h2>Legendas: </h2>
                 <ul id='subtitle-list'>
+<<<<<<< HEAD:src/edit.html
                     
+=======
+                    <li v-for='t in tracks' :key='`${t.order}-track-item`' class='subtitle-list-item d-flex' @click='setEditMode(t)'>
+                        <div class="subtitle-timestamp d-flex flex-column">
+                            <input type="text" v-model='t.timestamp.start'>
+                            <input type="text" v-model='t.timestamp.end'>
+                        </div>
+                        <div class="subtitle-content flex-center">
+                            {{t.text}}
+                        </div>
+                    </li>
+>>>>>>> parent of 5209908 (feat: Começa a uitilizar webpack):public/edit.html
                 </ul>
             </nav>
             
