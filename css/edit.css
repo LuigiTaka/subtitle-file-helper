@@ -1,0 +1,58 @@
+
+        .subtitle-list-item{
+            border:1px solid black;
+            max-width: 400px;
+            margin-bottom: 7px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .subtitle-list-item:hover{
+            transition: .655s background-color, .2s color;
+            background-color: grey;
+            color: white;
+        }
+
+        .subtitle-timestamp{
+            max-width: 150px;
+            row-gap: 10px;
+        }
+
+        .subtitle-content{
+            margin-left: 7px;
+            padding:7px
+        }
+
+        nav > ul{
+            margin: 0;
+            padding: 0;
+            max-width: 400px;
+            height: 300px;
+            max-height: 400px;
+            overflow-x: scroll;
+        }
+
+        main{
+            display: flex;
+            width: 90%;
+            column-gap: 10px;
+
+        }
+
+        main > section{
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        h2{
+            margin: 0;
+        }
+
+        #edit-area > textarea{
+            width: 100%;
+        }
+
+        #cheatsheet-action{
+            display: flex;  
+        }
