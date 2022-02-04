@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Srt Maker</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+    <style>
+
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,body{
+            height: 100vw;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            
+        }
+
+        #app{
+            padding: 14px;
+            height: 100%;
+        }
+
+        ul{
+            margin: 0;
+            padding: 0;
+        }
+    
+        li{
+            padding:0;
+            margin: 0;
+            list-style: none;
+        }
+
+        header{
+            margin-bottom: 14px;    
+        }
+
+        header > div { 
+            margin-bottom: 14px;
+        }
+
+        .main{
+            height: 60%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main > nav{
+            justify-content: stretch;
+            align-items: center;
+            flex-direction: column;
+            padding: 7px;
+        }
+        
+        .cc-list{
+            align-items: stretch;
+            max-height: 70%;
+            height: 70%;
+            overflow-y: scroll;
+        }
+
+        .cc-row{
+            border-radius: 15px;
+            padding: 7px;
+            width: 100%;
+            border-bottom: 1px solid #cecece;
+            margin-bottom: 12px;
+        }
+
+        .cc-row:hover{
+            transition: .7s;
+            background-color: #cecece;
+        }
+
+        .d-flex{
+            display: flex;
+        }
+
+        section{
+            margin-left: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start
+        }
+
+        .cc-order{
+            text-align: center;
+            width: 64px;
+        }
+
+        .cc-timestamp{
+            text-align: center;
+            width: 150px;
+        }
+
+        .cc-separetor{
+            text-align: center;
+            width: 30px;
+        }
+    
+        .cc-text{
+            width: 100%;
+            padding:14px;
+        }
+
+        .highlight{
+            background-color: #cecece;
+        }
+
+        .h-100  {
+            height:100%;
+        }
+
+        .pb-2{
+            padding-bottom:14px;
+        }
+
+        .mt-2{
+            margin-top: 14px;
+        }
+
+        .w-100{
+            width: 100%;
+        }
+
+        .cc-header{
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+
+        .history{
+            padding-right: 14px;
+            margin-right: 14px;
+            border-radius: 25%;
+            width: 8px;
+            display: inline-block;
+            background-color: #c4c4c4;
+        }
+
+        .history-highlight{
+            background-color: greenyellow;
+            
+        }
+
+    </style>
+
+</head>
+<body >
+    <div id='app'>
+    <header>
+        <div>
+             <h1>Srt Maker</h1>
+             <p>Ferramenta para criar legendas de arquivos SRT.</p> 
+        </div>
+
+        <div v-if='!id'>
+            <h2>Selecione um arquivo para continuar</h2>
+            <label for="srt-file">Arquivo de Legenda.</label>
+            <input type="file" name="srt-file" accept=".srt" id="srt-file" ref='ccTrack'>
+
+            <button id='sender' name='sender' @click='loadFile()'>Enviar</button>
+
+        </div>
+        <div v-else-if='id'>
+            <button @click='cleanStorage()'>Limpar</button>
+
+            <button @click="downloadFile">Baixar</button>
+
+            <button @click="copy()">Copiar</button>
+        </div>
+        <hr>
+    </header>
+    <main class='main'>
+
+        <nav class='d-flex'>
+            <div class='pb-2'>
+                <input type="search" placeholder="Procurar...">
+            </div>
+            <div class='h-100'>
+                <ul class='cc-list' v-if='fileLoaded'>
+                    <template v-for='l in tracks'>
+                        <li :key="`track-${l.order}`" :class='{"cc-row":true,"highlight":l.order === currentSubtitle.order}'
+                        @click='setEditMode(l)'>
+                            <div class='cc-header'>
+                               <span :class='{"history-highlight":l.hasHistory,"history":true}'></span> <span> {{l.timestamp.start}} --> {{l.timestamp.end}} </span>
+                            </div>
+                            <div class='cc-body'>
+                                <span> {{l.text}} </span>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </nav>
+
+        <section v-if='editing'>
+            <div class='d-flex'>
+                <input type="number" disabled name='order' :value="currentSubtitle.order" class='cc-order'>
+                <input type="text" format='\d{2}:\d{2}:\d{2},\d{3}' v-model='currentSubtitle.timestamp.start' class='cc-timestamp'>
+                <input type="text" disabled value=' --> ' class='cc-separetor'>
+                <input type="text" pattern="\d{2}:\d{2}:\d{2},\d{3}" v-model='currentSubtitle.timestamp.end' class='cc-timestamp'>
+            </div>
+            <div class='mt-2'>
+                <textarea type="text" :value='currentSubtitle.originalText' class='w-100' disabled></textarea>
+                <textarea name="" id="" cols="30" rows="10" v-model='currentSubtitle.text' class='cc-text'></textarea>
+            </div>
+            <div>
+                <button @click='save()'>Salvar</button>
+                <button @click='deleteHistory()' :disalbed='!currentSubtitle.hasHistory' >Apagar</button>
+            </div>
+        </section>  
+
+    </main>
+</div>
+</body>
+<script src="/js/SrtParser.js"></script>
+
+<script>
+    const SrtSubtitleUI = Object({hasHistory:false},SrtSubtitle);
+    const upload = async (url,formData) => {
+        return fetch(url, { // Your POST endpoint
+            method: 'POST',
+            headers: {
+                // Content-Type may need to be completely **omitted**
+                // or you may need something
+                //"Content-Type": "multipart/form-data"
+            },
+            body: formData // This is your file object
+        });
+    };
+
+    const makeSubtitleMemoryKey = ({order}) => { 
+        let key = 'subtitle-order-'+order;
+        return key;
+
+    };
+
+    const srtTrackFormat = ({text,timestamp,order}) => {
+        let timestampText = [timestamp.start, timestamp.end].join(" --> ");
+        let track = [ "\u200e"+order,timestampText,text ];
+        return track.join('\n')+"\n";
+    }
+
+    const sessionMemoryKey = ({id}) => { 
+        return "srt-"+id;
+    }
+
+    const downloadFile = ({ filename,data,type }) => { 
+        let file = new Blob([data],{type:type});
+        if (window.navigator.msSaveOrOpenBlob) {  /* IE10+*/
+            window.navigator.msSaveOrOpenBlob(file, filename);
+        }else{ 
+            const url = URL.createObjectURL(file),
+            anchor = document.createElement('a');
+
+            anchor.href = url;
+            anchor.download = filename;
+            document.body.appendChild(anchor);
+            anchor.click();
+            setTimeout(function() {
+                document.body.removeChild(anchor);
+                window.URL.revokeObjectURL(url);  
+            }, 1);
+        }
+    }
+    
+    window.app = new Vue({
+        el:"#app",
+        data:{
+            tracks:[],
+            id:null,
+            fileLoaded: false,
+            editing:false,
+            currentSubtitle:{
+
+            },
+        },
+        computed:{
+   
+        },
+        mounted(){
+            let id = window.localStorage.getItem('srt-id');
+            if(id){
+                this.id = id;
+                this.loadFile();
+            }
+        },
+        methods:{
+            setEditMode(cc){
+                this.editing = true;
+                const data = JSON.parse(JSON.stringify(Object.assign(SrtSubtitleUI,cc)));
+                const subtitleMkey = makeSubtitleMemoryKey(data);
+                let history = window.localStorage.getItem(subtitleMkey);
+                if(history){
+                    this.currentSubtitle = JSON.parse(history);
+                }else{
+                    this.currentSubtitle = data;
+                }
+                this.currentSubtitle.originalText = data.text;
+            },
+            setTracks(tracks){
+                
+                for (const track of tracks) {
+                            const subtitleMkey = makeSubtitleMemoryKey(track);
+                            let hasHistory = window.localStorage.getItem(subtitleMkey);
+                            track.hasHistory = Boolean(hasHistory);
+                            track.originalText = track.text;
+                }    
+                this.tracks = tracks;
+
+            },
+            loadFile(){
+                    this.fileLoaded = false;
+                let parser = new SrtParser();
+                if(this.id){
+                    const content = window.localStorage.getItem("srt-content-"+this.id);
+                    const tracks = parser.parse({content:content});
+                    console.log(tracks);
+                    this.setTracks(tracks);
+                    this.fileLoaded = true;
+                    return;
+                }
+
+                let $file = this.$refs.ccTrack;
+                read = new FileReader();
+                read.readAsBinaryString($file.files[0]);
+
+                let id = Math.random().toString();
+                read.onloadend = () => {
+                    const content = (read.result);
+                    console.log(content)
+                    let tracks = parser.parse( {content} );
+                    this.setTracks(tracks);
+                    this.fileLoaded = true;
+                    if(!this.id){
+                        this.id = id;
+                    }
+                    const sessionMkey = sessionMemoryKey({id:this.id});
+                    window.localStorage.setItem("srt-id",this.id);
+                    window.localStorage.setItem('srt-content-'+this.id,content);
+                }
+            },
+            cleanStorage(){
+                window.localStorage.removeItem("srt-id")
+            },
+            save(){ 
+                let c= this.tracks.find( x => x.order === this.currentSubtitle.order );
+                c.hasHistory = true;
+                const k = makeSubtitleMemoryKey(this.currentSubtitle);
+                
+                c.timestamp.end = this.currentSubtitle.timestamp.end;
+                c.timestamp.start = this.currentSubtitle.timestamp.start;
+                c.text = this.currentSubtitle.text;
+                //c = Object.assign(SrtSubtitle,c,this.currentSubtitle);
+                console.log(c)
+                //this.currentSubtitle.timestamp.start
+                window.localStorage.setItem(k,JSON.  stringify(this.currentSubtitle));
+            },
+            deleteHistory(){
+                const t = this.tracks.find( x => x.order === this.currentSubtitle.order );
+                console.log( Object.assign({},t) );
+                t.hasHistory = false;
+                t.text = t.originalText;
+                this.currentSubtitle.text = t.text;
+                console.log(t);
+                window.localStorage.removeItem("subtitle-order-"+this.currentSubtitle.order);
+            },
+            downloadFile(){ 
+                //will get all the subtitles and add together in the SRT file format.
+                //all data will be deleted.
+                //inserting the new file in the API should be possible.
+                let lines = this.tracks.map((track) => { 
+                    if(track.hasHistory){
+                        const key = makeSubtitleMemoryKey(track);
+                        const subtitleMemory = JSON.parse(window.localStorage.getItem(key));
+                        track.text = subtitleMemory.text
+                    }
+                     
+                    return srtTrackFormat(track);
+                });
+                let fileContent = lines.join("\n\r");
+
+                console.log(fileContent);
+
+                console.log("Total Cells: "+lines.length);
+                console.info("Downloading...");
+                downloadFile({filename:"minha_legenda.srt",data:fileContent,type:"text"});
+            },
+            copy(){ 
+                console.warn("not yet");
+            }
+
+        }
+    });
+</script>
+
+</html>
