@@ -45,3 +45,20 @@
 .pb-1{
     padding-bottom: 7px;
 }
+
+.mb-1{
+    margin-bottom: 7px;
+}
+
+
+.mb-2{
+    margin-bottom: 14px;
+}
+
+.d-block{
+    display: block;
+}
+
+.d-inline{
+    display: inline-block;
+}
