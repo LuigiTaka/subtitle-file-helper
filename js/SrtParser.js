@@ -16,7 +16,6 @@ class SrtParser  {
     }
     
     SrtSubtitle2String(SrtSubtitle){ 
-        console.log(SrtSubtitle)
         let lines = [ ];
         for (const key in SrtSubtitle) {
             let line = SrtSubtitle[key];
@@ -56,11 +55,10 @@ class SrtParser  {
     build(subtitles) { 
         let lines = [];
         for (const index in  subtitles) {
-            console.log(index)
                 let line = this.SrtSubtitle2String(subtitles[index]);
                 lines.push( line );
         }
-        return lines.join('\n\n');
+        return lines.join("\n\n");
     }
 
 };
