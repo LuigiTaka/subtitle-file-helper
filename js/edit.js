@@ -75,7 +75,6 @@ const renderEditMode = (editData) => {
 
 }
 let params = getParams();
-
 const id = params.id;
 const tracks = getTracks(id);
 const EditData = { 
@@ -97,6 +96,7 @@ const onListItemClick = (e,track) => {
 
 const $saveTrackTrigger = get("#save-track");
 const $downloadTrigger = get("#downloadBtn");
+const $filename = get("#filename");
 
 const saveTrack = (track) => {
     //carrega a legenda do localStorage... 
@@ -115,7 +115,9 @@ const downloadSubtitle = (id) => {
     let content = parser.build( tracks );
 
     let filename = get("#filename").value.trim() || "subtitle";
-    filename = filename+'.srt';
+    if(! filename.match(/\.srt$/) ){
+        filename = filename+'.srt';
+    }
 
     downloadFile({
         filename: filename,
@@ -146,5 +148,8 @@ const renderConfig = {
     itemConfig: {onClick: onListItemClick,track:null },
     target:$list,
 }; 
+
+let metadata = getWorkareaMetadata(id);
+$filename.value = metadata.filename;
 
 renderList( tracks,renderConfig );
