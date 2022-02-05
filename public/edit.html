@@ -45,30 +45,27 @@
             <section class='flex'>
 
                 <div id='edit-area'>
-                    <div id='edit-btns'>
-                        <button id='save-track'> Salvar </button>
-
+                    <div id='edit-btns' class="d-flex mb-2">
                         <div>
                             <label for="change-color">Alterar cor</label>
                             <input type="color" name="" id="subtitle-color">
                         </div>
+                        <button id='save-track'> Salvar </button>
                     </div>
-                    <div>
-                        <input type="text" id='timestamp-start' data-name="start">
-                        <input type="text" id="timestamp-end" data-name='end'>
+                    <div class="mb-1">
+                        <div class='d-inline'>
+                            <label class='d-block' for="timestamp-start">Começo</label>
+                            <input type="text" id='timestamp-start' data-name="start">
+                        </div>
+
+                        <div class="d-inline">
+                            <label class="d-block" for="timestamp-end">Fim</label>
+                            <input type="text" id="timestamp-end" data-name='end'>
+                        </div>
                     </div>
+                    
+                    <label for="subtitle-text" class="d-block"> Legenda </label>
                     <textarea name="" id="subtitle-text" cols="30" rows="10"></textarea>
-                </div>
-
-                <div id='cheatsheet-action'>
-                    <div>
-                        <ul>
-                            <li>  Negrito: <\n><\/n>  </li>
-                            <li>  Italico: <\i><\/i>  </li>
-                            <li>  Sublinhado: <\u><\/u>  </li>
-                        </ul>
-                    </div>
-
                 </div>
 
             </section>

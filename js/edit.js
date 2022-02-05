@@ -153,3 +153,4 @@ let metadata = getWorkareaMetadata(id);
 $filename.value = metadata.filename;
 
 renderList( tracks,renderConfig );
+renderEditMode( tracks[0]  );
