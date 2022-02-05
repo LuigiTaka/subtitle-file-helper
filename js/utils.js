@@ -1,5 +1,40 @@
+const trackStorageId = (track) => "subtitle-order-"+track.order;
 
-export function get(selector) { 
+
+function getParams (url = window.location) {
+	let params = {};
+	new URL(url).searchParams.forEach(function (val, key) {
+		if (params[key] !== undefined) {
+			if (!Array.isArray(params[key])) {
+				params[key] = [params[key]];
+			}
+			params[key].push(val);
+		} else {
+			params[key] = val;
+		}
+	});
+	return params;
+}
+
+function getTrackByOrder(order) {
+    const key = trackStorageId({order:order});
+    let item = window.localStorage.getItem(key);
+    if(!item){
+        return false;
+    }
+
+    return item;
+}
+
+function updateTrack(tracks,id) {
+    const strId = id+"_content";
+    const data = JSON.stringify(tracks);
+    return window.localStorage.setItem( strId,data );
+}
+
+
+
+ function get(selector) { 
     const token = selector.substr(0,1);
     selector = selector.substr(1);
     let $els = null;
@@ -15,7 +50,7 @@ export function get(selector) {
     return $els;
 }
 
-export function downloadFile({ filename,data,type }) { 
+ function downloadFile({ filename,data,type }) { 
     let file = new Blob([data],{type:type});
     if (window.navigator.msSaveOrOpenBlob) {  /* IE10+*/
         window.navigator.msSaveOrOpenBlob(file, filename);
@@ -34,21 +69,21 @@ export function downloadFile({ filename,data,type }) {
     }
 }
 
-export function generateId(){ 
+ function generateId(){ 
     // @todo verificar se existe esse id e gerar outro caso sim.
     let id = Math.random().toString();
     return id;
 }
 
-export function setFileLoaderOn()  { 
+ function setFileLoaderOn()  { 
     get("#file-description").text = 'Carregando...'
 }
 
-export function setFileLoderOff() { 
+ function setFileLoderOff() { 
     get("#file-description").text = 'Pronto.'
 }
 
-export function handleFileContent(file) {
+ function handleFileContent(file) {
     let read = new FileReader();    
     setFileLoaderOn();
     window.cfile = file;
@@ -68,7 +103,7 @@ export function handleFileContent(file) {
     read.readAsText(file); 
 }
 
-export function dropHandler (e) { 
+ function dropHandler (e) { 
     let dt = e.dataTransfer
     let file = null;
     if (e.dataTransfer.items) {
