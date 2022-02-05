@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Page Title </title>
+    <script src="/js/utils.js"></script>
+    <script src="/js/SrtParser.js"></script>
+    
     <link rel="stylesheet" href="/css/utils.css">
     <link rel="stylesheet" href="/css/edit.css">
 
@@ -28,7 +31,7 @@
 
                 <div id='edit-area'>
                     <div id='edit-btns'>
-                        <button>Btn 1</button>
+                        <button id='save-track'> Salvar </button>
                         <button>Btn 2</button>
                     </div>
                     <textarea name="" id="subtitle-text" cols="30" rows="10"></textarea>
@@ -46,7 +49,7 @@
                     <div class='d-flex flex-column flex flex-center'>
 
                         <button>Salvar Todos</button>
-                        <button>Baixar Arquivo</button>
+                        <button id='downloadBtn'>Baixar Arquivo</button>
                     </div>
 
                 </div>
