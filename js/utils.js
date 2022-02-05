@@ -16,6 +16,12 @@ function getParams (url = window.location) {
 	return params;
 }
 
+function getWorkareaMetadata(id) { 
+    let data = window.localStorage.getItem(id+"_metadata");
+    let json = JSON.parse(data);
+    return json;
+}
+
 function getTrackByOrder(order) {
     const key = trackStorageId({order:order});
     let item = window.localStorage.getItem(key);

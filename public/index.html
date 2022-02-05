@@ -121,7 +121,6 @@
     const handleFileContent = (file) => {
         let read = new FileReader();    
         setFileLoaderOn();
-        window.cfile = file;
         read.onload = function(event) {
             event.preventDefault() 
             const content = event.target.result;
@@ -130,6 +129,12 @@
             let lines = parser.parse( {content:content} );  
             lines = JSON.stringify(lines);
             window.localStorage.setItem(contentId + "_content",lines);
+            
+            window.localStorage.setItem(contentId + "_metadata",JSON.stringify({
+                filename: file.name,
+                id: contentId,
+            }));
+
             setTimeout(() => { 
                 setFileLoderOff();
                 window.location.href = '/public/edit.html?id='+contentId;
