@@ -2,6 +2,9 @@ const SrtSubtitle = {
     text:'',
     timestamp:{start:null,end:null},
     order:null,
+    metadata:{
+        color:null,
+    }
 
 };
 
@@ -17,15 +20,17 @@ class SrtParser  {
     
     SrtSubtitle2String(SrtSubtitle){ 
         let lines = [ ];
-        for (const key in SrtSubtitle) {
-            let line = SrtSubtitle[key];
-            if(key === 'timestamp'){
-                line = SrtSubtitle[key].start+' --> '+SrtSubtitle[key].end;
-            }
+        let hasColor = SrtSubtitle.metadata.color;
+    
+        lines[0] = '\u200e'+SrtSubtitle.order;
+        lines[1] = SrtSubtitle.timestamp.start+' --> '+SrtSubtitle.timestamp.end;
 
-            lines.unshift( line )
+        let text = SrtSubtitle.text;
+        if(hasColor){
+            text = `<font color="${SrtSubtitle.metadata.color}" >${text}</font>`;
         }
-        lines[0] = '\u200e'+lines[0];
+
+        lines[2] = text;
         return lines.join('\n');
     }
 
