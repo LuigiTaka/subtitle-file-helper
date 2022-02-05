@@ -11,6 +11,16 @@
     <link rel="stylesheet" href="/css/utils.css">
     <link rel="stylesheet" href="/css/edit.css">
 
+    <style>
+
+        #filename{
+            border: none;
+            border-bottom: 1px solid;
+            padding: 2px;
+        }
+
+    </style>
+
 </head>
 <body>
     <div id='app'>
@@ -21,7 +31,12 @@
         <main>
     
             <nav>
-                <h2>Legendas: </h2>
+                <h2 class='pb-1'>Legendas:  <input type="text" id="filename"> </h2>
+                <div>
+                    <button> Alterar cor </button>
+                    <button id='downloadBtn'>Download</button>
+                    <button>Salvar</button>
+                </div>
                 <ul id='subtitle-list'>
            
                 </ul>
@@ -52,12 +67,6 @@
                             <li>  Italico: <\i><\/i>  </li>
                             <li>  Sublinhado: <\u><\/u>  </li>
                         </ul>
-                    </div>
-
-                    <div class='d-flex flex-column flex flex-center'>
-
-                        <button>Salvar Todos</button>
-                        <button id='downloadBtn'>Baixar Arquivo</button>
                     </div>
 
                 </div>

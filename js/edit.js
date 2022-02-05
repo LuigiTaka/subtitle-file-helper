@@ -30,9 +30,14 @@ const getTracks = (id) => {
     return json;
 }
 
+const changeAllSubtitleColor = (tracks,color) => {
+    return tracks.map(element => { 
+        element.metadata.color = color;
+    });
+ }
+
 const renderEditMode = (editData) => { 
-    console.info("edit mode");
-    console.log(editData);
+
 
     let $timestampStart = get("#timestamp-start"),
         $timestampEnd = get("#timestamp-end");
@@ -108,8 +113,12 @@ const downloadSubtitle = (id) => {
     let tracks = getTracks(id);
     let parser = new SrtParser;
     let content = parser.build( tracks );
+
+    let filename = get("#filename").value.trim() || "subtitle";
+    filename = filename+'.srt';
+
     downloadFile({
-        filename: 'subtitle.srt',
+        filename: filename,
         data: content,
         type:'text',
     })
