@@ -11,8 +11,8 @@ const renderListItem = (t,options) => {
 
     $li.innerHTML =  `
                         <div class="subtitle-timestamp d-flex flex-column">
-                            <input type="text" value='${t.timestamp.start}'>
-                            <input type="text" value='${t.timestamp.end}'>
+                            <input type="text" value='${t.timestamp.start}' disabled>
+                            <input type="text" value='${t.timestamp.end}' disabled>
                         </div>
                         <div class="subtitle-content flex-center">
                             ${t.text}
@@ -31,7 +31,30 @@ const getTracks = (id) => {
 }
 
 const renderEditMode = (editData) => { 
-    const $textarea = document.getElementById("subtitle-text");
+    console.info("edit mode");
+    console.log(editData);
+
+    let $timestampStart = get("#timestamp-start"),
+        $timestampEnd = get("#timestamp-end");
+
+    $timestampStart.value = editData.timestamp.start;
+    $timestampEnd.value = editData.timestamp.end;
+
+
+    [$timestampEnd,$timestampStart].forEach($element => { 
+        $element.addEventListener('change',(e) => { 
+            let key = e.target.dataset.name;
+            editData.timestamp[key] = e.target.value;
+        });
+    })
+
+    let $colorpick = get("#subtitle-color")
+    $colorpick.addEventListener("change",(e) => { 
+        let color = e.target.value;
+        editData.metadata.color = color;
+    });     
+
+    const $textarea = get("#subtitle-text");
     $textarea.innerText = editData.text;
 
     $textarea.addEventListener('change',(e) => {
@@ -55,6 +78,9 @@ const EditData = {
     timestamp:{start:'',end:''},
     order:"",
     oldText:'',
+    metadata:  {
+        color:'',
+    }
 };
 
 const onListItemClick = (e,track) => { 
