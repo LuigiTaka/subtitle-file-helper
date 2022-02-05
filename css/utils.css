@@ -41,3 +41,7 @@
 .text-center{
     text-align: center;
 }
+
+.pb-1{
+    padding-bottom: 7px;
+}
