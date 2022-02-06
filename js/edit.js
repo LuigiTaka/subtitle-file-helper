@@ -53,7 +53,18 @@ const renderEditMode = (editData) => {
         });
     })
 
-    let $colorpick = get("#subtitle-color")
+    let $colorpick = get("#subtitle-color");
+
+    if(editData.metadata.color){
+        console.info("order "+editData.order+": has color");
+        console.log(editData.metadata);
+        $colorpick.value = '';
+        $colorpick.select();
+
+        $colorpick.value = editData.metadata.color;
+        $colorpick.select();
+    }
+
     $colorpick.addEventListener("change",(e) => { 
         let color = e.target.value;
         editData.metadata.color = color;
@@ -96,7 +107,30 @@ const onListItemClick = (e,track) => {
 
 const $saveTrackTrigger = get("#save-track");
 const $downloadTrigger = get("#downloadBtn");
+const $changeAllColorsTrigger = get("#change-all-colors");
 const $filename = get("#filename");
+const $saveAll = get("#save-all");
+
+$changeAllColorsTrigger.addEventListener("click",(e) =>{ 
+    let colorpickerWrapper = get("#all-colorpick-wrapper")
+    colorpickerWrapper.classList.remove("d-none");
+    let $all = get("#all-colors");
+    $all.click()
+
+    $all.addEventListener("change",(e) => { 
+        tracks.forEach( subtitle => { 
+            subtitle.metadata.color = e.target.value;
+        } );
+        updateTrack(tracks,id)
+        renderList(tracks,renderConfig);
+        colorpickerWrapper.classList.add("d-none");
+    });
+});
+
+console.log($saveAll);
+$saveAll.addEventListener("click",(e) => { 
+    updateTrack(tracks,id)
+})
 
 const saveTrack = (track) => {
     //carrega a legenda do localStorage... 

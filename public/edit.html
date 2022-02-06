@@ -33,9 +33,13 @@
             <nav>
                 <h2 class='pb-1'>Legendas:  <input type="text" id="filename"> </h2>
                 <div>
-                    <button> Alterar cor </button>
+                    <button id="change-all-colors"> Alterar cor </button>
                     <button id='downloadBtn'>Download</button>
-                    <button>Salvar</button>
+                    <button id="save-all">Salvar</button>
+                </div>
+                <div class="d-none" id="all-colorpick-wrapper">
+                    <label for="all-colors">Cor da legenda</label>
+                    <input id='all-colors' type="color">
                 </div>
                 <ul id='subtitle-list'>
            
@@ -63,7 +67,7 @@
                             <input type="text" id="timestamp-end" data-name='end'>
                         </div>
                     </div>
-                    
+
                     <label for="subtitle-text" class="d-block"> Legenda </label>
                     <textarea name="" id="subtitle-text" cols="30" rows="10"></textarea>
                 </div>
