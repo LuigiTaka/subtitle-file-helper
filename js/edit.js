@@ -43,13 +43,16 @@ const renderEditMode = (trackData) => {
 
     $timestampStart.value = editData.timestamp.start;
     $timestampEnd.value = editData.timestamp.end;
-
+    
+    const timestampChange = (e) => { 
+        let editData = e.target.editData;
+        let key = e.target.dataset.name;
+        editData.timestamp[key] = e.target.value;
+    };
 
     [$timestampEnd,$timestampStart].forEach($element => { 
-        $element.addEventListener('change',(e) => { 
-            let key = e.target.dataset.name;
-            editData.timestamp[key] = e.target.value;
-        });
+        $element.editData = editData;
+        $element.addEventListener('change',timestampChange);
     })
 
     let $colorpick = get("#subtitle-color");
@@ -80,10 +83,14 @@ const renderEditMode = (trackData) => {
     let $saveTrackTrigger = get("#save-track");
 
     const saveClickHandler = (e) => {
-        let editData = e.target.editData; 
+        let editData = e.target.editData;
+        console.group("saveClickHandler")
+        console.log(editData);
+        console.groupEnd(); 
         saveTrack( editData );
         $saveTrackTrigger.removeEventListener("click",saveClickHandler,false);
         e.stopPropagation();
+        e.preventDefault();
         return;
     }
 
@@ -139,6 +146,9 @@ $saveAll.addEventListener("click",(e) => {
 
 const saveTrack = (track) => {
     //carrega a legenda do localStorage... 
+    console.group('saveTrack');
+    console.log(track);
+    console.groupEnd();
     const target = tracks.find( x => x.order === track.order );
     let updated = Object.assign(target,track);
     updated = updateTrack(tracks,id);
