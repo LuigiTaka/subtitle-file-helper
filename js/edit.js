@@ -48,6 +48,7 @@ const renderEditMode = (trackData) => {
         let editData = e.target.editData;
         let key = e.target.dataset.name;
         editData.timestamp[key] = e.target.value;
+        renderEditMode(editData);
     };
 
     [$timestampEnd,$timestampStart].forEach($element => { 
@@ -91,6 +92,7 @@ const renderEditMode = (trackData) => {
         $saveTrackTrigger.removeEventListener("click",saveClickHandler,false);
         e.stopPropagation();
         e.preventDefault();
+        renderEditMode(editData);
         return;
     }
 
