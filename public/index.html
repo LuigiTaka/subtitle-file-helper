@@ -126,7 +126,7 @@
             const content = event.target.result;
             const contentId = generateId();
         
-            let lines = parser.parse( {content:content} );  
+            let lines = parser.parse( {content:content} );
             lines = JSON.stringify(lines);
             window.localStorage.setItem(contentId + "_content",lines);
             
@@ -152,7 +152,6 @@
             // If dropped items aren't files, reject them
                  if (e.dataTransfer.items[i].kind === 'file') {
                      file = e.dataTransfer.items[i].getAsFile();
-                    console.log('... file[' + i + '].name = ' + file.name);
                 }
             }
         }

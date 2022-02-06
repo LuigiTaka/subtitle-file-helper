@@ -44,19 +44,24 @@ class SrtParser  {
     parse ({content}) { 
         const rawSubtitles = this.splitFileContent(content);
         const subtitles = rawSubtitles.map( (row) => { 
-            if(!row || !row.length){
-                return Object.assign({},SrtSubtitle);
+            let srt =  Object.assign({},SrtSubtitle);
+            if(row === undefined || !row || !row.length){
+                return srt;
             }
-
+            
             let lines = row.split("\n");
-            const srt =  Object.assign({},SrtSubtitle);
             srt.order = Number.parseInt(lines.shift().replace(/\u200e/ui,'').trim() );
             let timestamps = lines.shift().split( '-->' ).map( t => t.trim() );
             srt.timestamp.start = timestamps[0];
             srt.timestamp.end = timestamps[1];
             srt.text = lines.join('\n')+"\n".replace(/\u200e/ui,'').trim();
-            return srt;
-        });
+            if(srt.order === 1){
+                console.info("first");
+                console.log(Object.assign({},srt));
+            }
+            
+            return JSON.parse(JSON.stringify(srt));
+        },this);
         return subtitles;
     }
 
