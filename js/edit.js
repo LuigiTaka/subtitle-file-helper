@@ -36,9 +36,8 @@ const changeAllSubtitleColor = (tracks,color) => {
     });
  }
 
-const renderEditMode = (editData) => { 
-
-
+const renderEditMode = (trackData) => { 
+    let editData = Object.assign({},trackData);
     let $timestampStart = get("#timestamp-start"),
         $timestampEnd = get("#timestamp-end");
 
@@ -56,8 +55,6 @@ const renderEditMode = (editData) => {
     let $colorpick = get("#subtitle-color");
 
     if(editData.metadata.color){
-        console.info("order "+editData.order+": has color");
-        console.log(editData.metadata);
         $colorpick.value = '';
         $colorpick.select();
 
@@ -72,6 +69,7 @@ const renderEditMode = (editData) => {
 
     const $textarea = get("#subtitle-text");
     $textarea.innerText = editData.text;
+    $textarea.value = editData.text;
 
     $textarea.addEventListener('change',(e) => {
         //dispara apenas quando o foco sai do elemento
@@ -80,9 +78,17 @@ const renderEditMode = (editData) => {
     });
 
     let $saveTrackTrigger = get("#save-track");
-    $saveTrackTrigger.addEventListener("click",(e) => { 
+
+    const saveClickHandler = (e) => {
+        let editData = e.target.editData; 
         saveTrack( editData );
-    });
+        $saveTrackTrigger.removeEventListener("click",saveClickHandler,false);
+        e.stopPropagation();
+        return;
+    }
+
+    $saveTrackTrigger.addEventListener("click",saveClickHandler);
+    $saveTrackTrigger.editData = editData;
 
 }
 let params = getParams();
@@ -101,8 +107,7 @@ const EditData = {
 const onListItemClick = (e,track) => { 
     let edit = Object.assign(EditData,track);
     renderEditMode(edit);
-
-
+    return;
 }
 
 const $saveTrackTrigger = get("#save-track");
@@ -127,7 +132,6 @@ $changeAllColorsTrigger.addEventListener("click",(e) =>{
     });
 });
 
-console.log($saveAll);
 $saveAll.addEventListener("click",(e) => { 
     updateTrack(tracks,id)
 })
@@ -188,4 +192,3 @@ let metadata = getWorkareaMetadata(id);
 $filename.value = metadata.filename;
 
 renderList( tracks,renderConfig );
-renderEditMode( tracks[0]  );
