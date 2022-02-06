@@ -107,6 +107,7 @@ const onListItemClick = (e,track) => {
 
 const $saveTrackTrigger = get("#save-track");
 const $downloadTrigger = get("#downloadBtn");
+<<<<<<< HEAD
 const $changeAllColorsTrigger = get("#change-all-colors");
 const $filename = get("#filename");
 const $saveAll = get("#save-all");
@@ -131,6 +132,9 @@ console.log($saveAll);
 $saveAll.addEventListener("click",(e) => { 
     updateTrack(tracks,id)
 })
+=======
+const $filename = get("#filename");
+>>>>>>> b27689326e40679042987b6f092a165227fe465a
 
 const saveTrack = (track) => {
     //carrega a legenda do localStorage... 
