@@ -62,3 +62,7 @@
 .d-inline{
     display: inline-block;
 }
+
+.d-none{
+    display: none;
+}
