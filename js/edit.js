@@ -131,6 +131,7 @@ console.log($saveAll);
 $saveAll.addEventListener("click",(e) => { 
     updateTrack(tracks,id)
 })
+const $filename = get("#filename");
 
 const saveTrack = (track) => {
     //carrega a legenda do localStorage... 
