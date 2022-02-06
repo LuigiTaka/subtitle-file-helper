@@ -132,6 +132,7 @@ $saveAll.addEventListener("click",(e) => {
     updateTrack(tracks,id)
 })
 
+
 const saveTrack = (track) => {
     //carrega a legenda do localStorage... 
     const target = tracks.find( x => x.order === track.order );
