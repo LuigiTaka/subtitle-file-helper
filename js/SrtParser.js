@@ -27,6 +27,9 @@ class SrtParser  {
 
         let text = SrtSubtitle.text;
         if(hasColor){
+            // pode não funcionar em todos os players. VLC funciona.
+            let regex = new RegExp(/(<font (.*?)>|<\/font>)/,'g');
+            text = text.replaceAll(regex,''); //remove tags de fonte caso tenha.
             text = `<font color="${SrtSubtitle.metadata.color}" >${text}</font>`;
         }
 
