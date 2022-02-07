@@ -1,5 +1,24 @@
 const trackStorageId = (track) => "subtitle-order-"+track.order;
 
+function createElement(template,wrapperTag = 'div') { 
+    const $wrapper = document.createElement(wrapperTag);
+    $wrapper.innerHTML = template;
+    return $wrapper;
+}
+
+
+function repalceNode(element){
+    let $clone = element.cloneNode(true);
+    return $clone.parentNode.replaceChild($clone,element);
+}
+
+function getTracks(id){
+    if(!id){
+        throw Error("id da legenda  não informado.")
+    }
+    let data = JSON.parse(window.localStorage.getItem(id+"_content"));
+    return data;
+}
 
 function getParams (url = window.location) {
 	let params = {};
@@ -38,6 +57,11 @@ function updateTrack(tracks,id) {
     return window.localStorage.setItem( strId,data );
 }
 
+function updateTrackMetadata(metadata,id){
+    id = id+"_metadata";
+    const data = JSON.stringify(metadata);
+    return window.localStorage.setItem(id,data);
+}
 
 
  function get(selector) { 
