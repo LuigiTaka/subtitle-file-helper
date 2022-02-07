@@ -55,9 +55,14 @@ class SrtParser  {
             srt.timestamp.start = timestamps[0];
             srt.timestamp.end = timestamps[1];
             srt.text = lines.join('\n')+"\n".replace(/\u200e/ui,'').trim();
-            if(srt.order === 1){
-                console.info("first");
-                console.log(Object.assign({},srt));
+            
+            let text = srt.text;
+
+            if(text.match(/<font/)){
+                let regex = RegExp(/(<font (.*?)>|<\/font>)/,'g');
+                let match = text.match(regex);
+                let color = match[0].match(/color=#(.*)/)[0].replace(/(color|=|"|'|<|>)/g,'');
+                srt.metadata.color = color;
             }
             
             return JSON.parse(JSON.stringify(srt));
