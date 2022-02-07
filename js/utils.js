@@ -6,12 +6,6 @@ function createElement(template,wrapperTag = 'div') {
     return $wrapper;
 }
 
-
-function repalceNode(element){
-    let $clone = element.cloneNode(true);
-    return $clone.parentNode.replaceChild($clone,element);
-}
-
 function getTracks(id){
     if(!id){
         throw Error("id da legenda  não informado.")
