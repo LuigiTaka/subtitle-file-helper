@@ -31,6 +31,7 @@ let appData = {
         'editTimeEnd': $editTimestampEnd,
         'editText': $editText,
         "listWrapper": $subtitleListWrapper,
+        'lastListItem':null,
     },
     tracksMetadata: metadata,
     tracks:tracks,
@@ -52,7 +53,7 @@ let appData = {
             return template;
         }
     },
-    start: function(appData){
+    start: async function(appData){
         appData.elements.editWrapper.classList.add("d-none");
         appData.elements.saveAllList.classList.add("d-none"); //esconde a funcionalidade de salvar todas as legendas.
 
@@ -77,20 +78,19 @@ let appData = {
             $li.subtitleData = subtitle;
             $li.addEventListener("click",appData.startEditMode,true);
             $listClone.appendChild( $li );
-            if( subtitle.order === editOrder ){
-                $lastEdit = $li;
+            if( editOrder && subtitle.order === editOrder ){
+                appData.elements.lastListItem = $li;
             }
+         
         });
 
         appData.elements.listWrapper.parentNode.replaceChild($listClone,appData.elements.listWrapper);
         appData.elements.listWrapper = $listClone;
-        
-        if($lastEdit){
-            $lastEdit.click();
-        }
 
         appData.elements.download.addEventListener("click",appData.downloadHandler);
         appData.elements.changeAllColorsTrigger.addEventListener("click",appData.changeAllColorClickHandler);
+
+        return appData;
     },
     updateFilenameHandler:function(e){
         let filename = e.target.value;
@@ -110,8 +110,13 @@ let appData = {
             sbt.metadata.color = color;
         });
         updateTrack(appData.tracks,appData.id);
-        appData.start(Object.assign({},appData));
           
+    },
+    startCallback: function(app){
+        if(app.elements.lastListItem){
+            app.elements.lastListItem.click();
+        }
+        return;
     },
     downloadHandler: function(e){
         //carrega as legendas do localStorage e cria o arquivo.
@@ -140,14 +145,9 @@ let appData = {
             console.groupEnd();
             throw Error("Não há dados para começar a edição.");
         }
-        //adiciona os eventos nos campos da legenda.
-        //clona os elementos e os substitui no DOM, removendo e adicionando os listeners.
-
-        let $save = appData.elements.editSaveSubtitle.cloneNode(true);
+        let $save = appData.elements.editSaveSubtitle;
         $save.editData = editData;
         $save.addEventListener('click',appData.saveSubtitleHandler);
-        appData.elements.editSaveSubtitle.parentNode.replaceChild($save,appData.elements.editSaveSubtitle);
-        appData.elements.editSaveSubtitle = $save;
 
         $changeElements = [
             { type: 'start', el: appData.elements.editTimeStart, value: editData.timestamp.start },
@@ -156,7 +156,13 @@ let appData = {
             {type:'color',el: appData.elements.editColor, value: editData.metadata.color||''}
         ];
 
-        $changeElements.forEach((data,index) => { 
+        appData.prepareEditElements($changeElements,editData).then(()=>{
+            appData.elements.editWrapper.classList.remove("d-none");
+        });
+       
+    },
+    prepareEditElements: async function(elements,editData){
+        elements.forEach((data,index) => { 
             data.el.dataset.type = data.type;
             data.el.value = data.value;
             data.el.editData = editData;
@@ -166,14 +172,7 @@ let appData = {
             }
             data.el.addEventListener("change",appData.subtitleChangeHandler);
         });
-
-
-        appData.elements.editWrapper.classList.remove("d-none");
-
-        console.groupEnd();
-        
     },
-
     subtitleChangeHandler: (e) => { 
         console.info("change handler");
         let type = (e.target.dataset.type);
@@ -198,14 +197,21 @@ let appData = {
     },
     saveSubtitleHandler: (e) => { 
         let editData = e.target.editData;
-        appData.saveSubtitle(editData);
-        appData.editData = editData;
-        appData.start( Object.assign({},appData) );
+        appData.saveSubtitle(editData).then(() => { 
+            appData.editData = editData;
+            appData.start( Object.assign({},appData) ).then( (app) => { 
+                console.info("start callback wraper");
+                console.log(app);
+                appData.startCallback(app);
+            } );
+        });
+       
     },
-    saveSubtitle: function(newSubtitle){ 
+    saveSubtitle:async  function(newSubtitle){ 
+        console.info("saveSubtitle");
         let current = appData.tracks.find( x => x.order === newSubtitle.order );
         current = Object.assign(current,newSubtitle);
-        updateTrack(appData.tracks,appData.id);
+        return updateTrack(appData.tracks,appData.id);
     }
 }
 
@@ -213,4 +219,5 @@ if(!appData.tracks && !appData.tracks.lenght){
     throw Error("Não existe nenhuma legenda com o identificador: " + appData.id);
 }
 
-appData.start(appData);
+let t = appData.start(appData);
+console.log(t);
