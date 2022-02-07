@@ -38,13 +38,26 @@ let appData = {
     editData:undefined,
     templates:{
         listItem: (subtitle) => { 
+            let cssStyle = '';
+            if(subtitle.metadata.color){
+                cssStyle = 'color:'+subtitle.metadata.color+";";
+            }
+
+            let text = subtitle.text;
+
+            if(text.match(/<font/)){
+                let regex = RegExp(/(<font (.*?)>|<\/font>)/,'g');
+                text = text.replaceAll(regex,'').trim();
+            }
+
+
             let template = `
             <div class="subtitle-timestamp d-flex flex-column">
                 <input type="text" value='${subtitle.timestamp.start}' disabled>
                 <input type="text" value='${subtitle.timestamp.end}' disabled>
             </div>
-            <div class="subtitle-content flex-center">
-                ${subtitle.text}
+            <div class="subtitle-content flex-center" style='${cssStyle}'>
+                ${text}
             </div>
             <div class='ml-auto text-light'>
                 ${subtitle.order}
