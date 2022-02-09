@@ -1,5 +1,19 @@
 const trackStorageId = (track) => "subtitle-order-"+track.order;
 
+function getAppHistory() {
+    let appHistory = JSON.parse(window.localStorage.getItem("app_history"));
+    if(!appHistory){
+        return [];
+    }
+    return appHistory;
+}
+
+function addAppHistory(id){
+    let history = getAppHistory();
+    history.push(id);
+    return window.localStorage.setItem("app_history",JSON.stringify(history));
+}
+
 function createElement(template,wrapperTag = 'div') { 
     const $wrapper = document.createElement(wrapperTag);
     $wrapper.innerHTML = template;
@@ -68,7 +82,10 @@ function updateTrackMetadata(metadata,id){
     }else if(token === '#'){
         $els = window.document.getElementById(selector);
     }else{
-        throw Error('Seletor: '+selector+" inválido. Esperado # ou . recebeu: "+token);
+        let tags = window.document.getElementsByTagNames(token);
+        if(!tags.length){
+            throw Error('Seletor: '+selector+" inválido. Esperado # ou . recebeu: "+token);
+        }
     }
 
     return $els;

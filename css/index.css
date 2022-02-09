@@ -19,6 +19,62 @@ main > section{
 }
 
 
+main > ul {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+li{
+    height: 60px;
+    border:1px solid black;
+    max-width: 90%;
+    margin-bottom: 7px; 
+    cursor: pointer;
+    align-items: center;
+    column-gap: 29px;
+    margin: 0;
+    padding-right:0;
+    border:none;
+    border-bottom: 1px solid;
+}
+
+li:hover{
+    background-color: var(--third-color);
+    transition: .7s;
+    color: white;
+}
+
+li button{
+    color: inherit;
+    background-color: transparent;
+    border: none;
+}
+
+li button.btn-delete:hover{
+    transition: .7s;
+    background-color: red;
+}
+
+
+li > .history-filename{
+
+}
+
+li > .history-actions{
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+    margin-left: auto;
+    padding: 0;
+    margin-right: 0;
+    height: 100%;
+}
+
+
+
 .file-input{
    cursor: pointer; 
 }

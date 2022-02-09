@@ -7,14 +7,65 @@ const parser = new SrtParser();
 let app = { 
     editHistory: [],
     parser:parser,
+    templates:{
+        historyListItem:(data) => { 
+            let template  = `
+            <div class='icon'>
+                <span> ${data.fileicon} </span>
+            </div>
+
+            <div class='history-filename'>
+                <span> ${data.filename} </span>
+            </div>
+            <div class='history-actions'>
+                <button class='btn btn-icon btn-delete' data-id='${data.id}'>  <span> 🗑 </span> </button>
+            </div>
+            `
+
+
+            return template;
+        },
+        
+    },
     elemenets:{
         dropArea: $dropArea,
         dropAreaInput: $dropAreaInput,
         novaLegenda:$novaLegendaBtn,
     },
     start:function(app){
-        console.info("starting");
+        let appHistory =getAppHistory();
+        console.log(appHistory);
+        if(appHistory.length > 0){
+            app.editHistory = appHistory;
+            app.renderHistoryMode(app);
+            return;
+        }
+        
         app.setHandlers(app);
+    },
+    renderHistoryMode:function(app) {
+        console.info("history mode");
+        let $main = get("#main");
+        $main.innerHTML = '';
+
+        let listItemConfig = { fileicon: '📄', filename:undefined, id:undefined, }
+
+        let $ul = createElement('','ul');
+
+        // $ul.classList.add('');
+        app.editHistory.forEach( subtitleId => { 
+            let filename = getWorkareaMetadata(subtitleId).filename;
+            let config  =  Object.assign(listItemConfig,{filename:filename,id:subtitleId});
+            let templateString = app.templates.historyListItem( config );
+            let $li = createElement(templateString,'li');
+            $li.classList.add("d-flex");
+
+            //get the wrapper
+            $ul.appendChild( $li );
+        } );
+        $main.appendChild( $ul );
+
+
     },
     setHandlers:function(app) { 
         let $dropArea = app.elemenets.dropArea,
@@ -102,6 +153,7 @@ let app = {
             
             let lines = app.parser.parse( {content:content} );
             lines = JSON.stringify(lines);
+
             window.localStorage.setItem(contentId + "_content",lines);
             
             window.localStorage.setItem(contentId + "_metadata",JSON.stringify({
@@ -109,6 +161,8 @@ let app = {
                 id: contentId,
             }));
     
+            addAppHistory( contentId );
+
             setTimeout(() => { 
                 app.setFileLoderOff();
                 window.location.href = '/public/edit.html?id='+contentId;
