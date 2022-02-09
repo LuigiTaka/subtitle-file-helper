@@ -20,6 +20,17 @@ function createElement(template,wrapperTag = 'div') {
     return $wrapper;
 }
 
+function deleteTrack(id){
+    [ id+"_content", id+"_metadata" ].forEach( id => { 
+        window.localStorage.removeItem(id);
+    } );
+
+    let history = getAppHistory();
+    history = history.filter( x => x !== id );
+    history = JSON.stringify(history);
+    window.localStorage.setItem("app_history",history);
+}
+
 function getTracks(id){
     if(!id){
         throw Error("id da legenda  não informado.")

@@ -22,7 +22,6 @@ let app = {
             </div>
             `
 
-
             return template;
         },
         
@@ -58,6 +57,7 @@ let app = {
             let config  =  Object.assign(listItemConfig,{filename:filename,id:subtitleId});
             let templateString = app.templates.historyListItem( config );
             let $li = createElement(templateString,'li');
+            $li.addEventListener("click",app.handlers.listItemClick);
             $li.classList.add("d-flex");
 
             //get the wrapper
@@ -94,6 +94,23 @@ let app = {
         
     },
     handlers:{
+        listItemClick:(e) => { 
+            let $el = e.target;
+            let id = undefined;
+
+
+            if( $el.classList.contains('btn-delete') && (id = $el.dataset.id) ){
+
+                if(!confirm("Quer mesmo deletar a legenda?")){
+                    return;
+                }
+                //remove legend.
+                deleteTrack(id);
+                console.info("track "+id+"removed.")
+            }
+
+            console.log(e.target);
+        },
         genericDropHandler:(e) => {
             e.preventDefault();
             e.stopPropagation();
