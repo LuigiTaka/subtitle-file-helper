@@ -101,7 +101,6 @@ let app = {
             const contentId = generateId();
             
             let lines = app.parser.parse( {content:content} );
-            return;
             lines = JSON.stringify(lines);
             window.localStorage.setItem(contentId + "_content",lines);
             

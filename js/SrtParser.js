@@ -18,10 +18,13 @@ class SrtParser  {
         this.SrtStartCharacter = "\u200e";
     }
     
-    SrtSubtitle2String(SrtSubtitle){ 
+    SrtSubtitle2String(SrtSubtitle){
         let lines = [ ];
-        let hasColor = SrtSubtitle.metadata.color;
-    
+        let hasColor = undefined;
+        if(SrtSubtitle.hasOwnProperty('metadata') && SrtSubtitle.metadata.hasOwnProperty("color")){
+            hasColor = SrtSubtitle.metadata.color;
+        }
+        
         lines[0] = '\u200e'+SrtSubtitle.order;
         lines[1] = SrtSubtitle.timestamp.start+' --> '+SrtSubtitle.timestamp.end;
 
@@ -57,11 +60,12 @@ class SrtParser  {
             srt.text = lines.join('\n')+"\n".replace(/\u200e/ui,'').trim();
             
             let text = srt.text;
-
+        
             if(text.match(/<font/)){
                 let regex = RegExp(/(<font (.*?)>|<\/font>)/,'g');
                 let match = text.match(regex);
-                let color = match[0].match(/color=#(.*)/)[0].replace(/(color|=|"|'|<|>)/g,'');
+                let color = match[0];
+                color = color.match(/#\w{6}\b/)[0];
                 srt.metadata.color = color;
             }
             
@@ -70,12 +74,17 @@ class SrtParser  {
         return subtitles;
     }
 
-    build(subtitles) { 
+    subtitleObj2string(subtitles){
         let lines = [];
         for (const index in  subtitles) {
                 let line = this.SrtSubtitle2String(subtitles[index]);
                 lines.push( line );
         }
+        return lines
+    }
+
+    build(subtitles) { 
+        this.subtitleObj2string(subtitles);
         return lines.join("\n\n");
     }
 
