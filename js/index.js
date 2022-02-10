@@ -59,6 +59,7 @@ let app = {
             let $li = createElement(templateString,'li');
             $li.addEventListener("click",app.handlers.listItemClick);
             $li.classList.add("d-flex");
+            $li.setAttribute('data-id',subtitleId);
 
             //get the wrapper
             $ul.appendChild( $li );
@@ -98,8 +99,11 @@ let app = {
             let $el = e.target;
             let id = undefined;
 
+            if($el.dataset.id){
+                id = $el.dataset.id;
+            }
 
-            if( $el.classList.contains('btn-delete') && (id = $el.dataset.id) ){
+            if( $el.classList.contains('btn-delete') && (id) ){
 
                 if(!confirm("Quer mesmo deletar a legenda?")){
                     return;
@@ -107,9 +111,11 @@ let app = {
                 //remove legend.
                 deleteTrack(id);
                 console.info("track "+id+"removed.")
+                return;
             }
 
-            console.log(e.target);
+            window.location.href = '/public/edit.html?id='+id;            
+
         },
         genericDropHandler:(e) => {
             e.preventDefault();
