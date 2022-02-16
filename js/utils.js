@@ -84,19 +84,22 @@ function updateTrackMetadata(metadata,id){
 
 
  function get(selector) { 
-    const token = selector.substr(0,1);
-    selector = selector.substr(1);
+    const token = selector.charAt(0);
     let $els = null;
-
+    let isTag = false;
     if(token === '.'){
-        $els = window.document.getElementsByClassName(selector);
+        $els = window.document.getElementsByClassName(selector.substr(1));
     }else if(token === '#'){
-        $els = window.document.getElementById(selector);
+        $els = window.document.getElementById(selector.substr(1));
     }else{
-        let tags = window.document.getElementsByTagNames(token);
-        if(!tags.length){
-            throw Error('Seletor: '+selector+" inválido. Esperado # ou . recebeu: "+token);
-        }
+        isTag = true;
+        $els = window.document.getElementsByTagName(selector);
+    }
+
+    if(isTag && $els.length === 0){
+        throw Error(`Nenhuma tag: ${selector} encontrada.`);
+    }else if(!isTag && $els.length === 0) {
+        throw Error(`Nehum seletor:${token}${selector}  encontrado.`);
     }
 
     return $els;
